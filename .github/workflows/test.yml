@@ -16,4 +16,7 @@ jobs:
 
       - run: echo "GITHUB_HEAD_REF${{ github.head_ref }}"
 
+      - name: git checkout
+        uses: actions/checkout@v2
+        
       - run: git rev-parse HEAD
