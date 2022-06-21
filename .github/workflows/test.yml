@@ -14,9 +14,9 @@ jobs:
       # - name: Get the output time
       #   run: echo "The time was ${{ steps.hello.outputs.time }}"
 
-      - run: echo "GITHUB_HEAD_REF${{ github.head_ref }}"
+      - run: echo "GITHUB_HEAD_REF ${{ github.sha }}"
 
       - name: git checkout
         uses: actions/checkout@v2
-        
+
       - run: git rev-parse HEAD
