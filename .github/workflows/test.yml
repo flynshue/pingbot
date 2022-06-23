@@ -23,5 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     name: read version
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        
       - name: read version file
         run: pwd
