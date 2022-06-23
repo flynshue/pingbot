@@ -24,4 +24,4 @@ jobs:
     name: read version
     steps:
       - name: read version file
-        run: cat VERSION
+        run: ls -l
