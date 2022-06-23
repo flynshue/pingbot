@@ -1,21 +1,27 @@
 on: [pull_request]
 
 jobs:
-  hello_world_job:
+  # hello_world_job:
+  #   runs-on: ubuntu-latest
+  #   name: A job to say hello
+  #   steps:
+  #     - name: Make Tag Version
+  #       id: version
+  #       uses: flynshue/test-workflows/version@test-sha
+
+  #     # Use the output from the `hello` step
+  #     - name: Get tag version
+  #       run: echo "The tag version ${{ steps.version.outputs.version }}"
+
+  #     - run: echo "GITHUB_HEAD_REF ${{ github.sha }}"
+
+  #     - name: git checkout
+  #       uses: actions/checkout@v2
+
+  #     - run: git rev-parse HEAD
+  version_job:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: read version
     steps:
-      - name: Make Tag Version
-        id: version
-        uses: flynshue/test-workflows/version@test-sha
-
-      # Use the output from the `hello` step
-      - name: Get tag version
-        run: echo "The tag version ${{ steps.version.outputs.version }}"
-
-      - run: echo "GITHUB_HEAD_REF ${{ github.sha }}"
-
-      - name: git checkout
-        uses: actions/checkout@v2
-
-      - run: git rev-parse HEAD
+      - name: read version file
+        run: cat VERSION
