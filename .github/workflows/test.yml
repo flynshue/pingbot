@@ -25,6 +25,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
-        
+
       - name: read version file
-        run: pwd
+        run: ls -l
