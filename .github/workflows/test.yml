@@ -24,4 +24,4 @@ jobs:
     name: read version
     steps:
       - name: read version file
-        run: ls -l
+        run: pwd
