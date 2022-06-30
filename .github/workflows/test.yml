@@ -53,5 +53,8 @@ jobs:
           index-url = https://${{ env.user }}:${{ env.password }}@example.jfrog.io/example/api/pypi/pypi/simple
           EOT
 
-      - name: cat pip.conf
-        run: cat pip.conf
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: path/to/artifact/world.txt
