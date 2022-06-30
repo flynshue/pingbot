@@ -26,11 +26,14 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
-      - name: read version file
-        id: version
+      - name: Set UUID
+        id: generate-uuid
+        uses: filipstefansson/uuid-action@v1
+        with:
+          name: ${{ gihub.sha }}
+          
+      # use the output from the `generate-uuid` step
+      - name: Get the UUID
         run: |
-          VERSION=$(cat VERSION)
-          echo "::set-output name=version::$(echo -n ${VERSION})"
-
-      - name: print version
-        run: echo "${{ steps.version.outputs.version }}"
+          tag_version=$(echo "${{ github.sha }}-${{ steps.generate-uuid.outputs.uuid }} | sha1sum")
+          echo "::set-output name=version::v$(date +%Y-%d-%m)-${tag_version:0:4}"
