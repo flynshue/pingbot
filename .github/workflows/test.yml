@@ -42,3 +42,13 @@ jobs:
       - name: print version
         run: |
           echo "${{ steps.versions.outputs.version }}"
+
+      - name: Test pip template
+        run: |
+          cat << EOT >> pip.conf
+          [global]
+          index-url = https://${{ secrets.PIP_USER }}:${{ secrets.PIP_PASS }}@example.jfrog.io/example/api/pypi/pypi/simple
+          EOT
+
+      - name: cat pip.conf
+        run: cat pip.conf
