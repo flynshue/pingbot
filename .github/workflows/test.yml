@@ -49,8 +49,9 @@ jobs:
     runs-on: ubuntu-latest
     name: test matrix
     needs: version_job
-    matrix:
-      component: [enforcer, validator, auditor]
+    strategy:
+      matrix:
+        component: [enforcer, validator, auditor]
     steps:
       - name: test component build
         run: |
