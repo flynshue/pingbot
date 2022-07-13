@@ -22,6 +22,8 @@ jobs:
   version_job:
     runs-on: ubuntu-latest
     name: read version
+    outputs:
+      version: ${{ steps.versions.outputs.version }}
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -43,18 +45,13 @@ jobs:
         run: |
           echo "${{ steps.versions.outputs.version }}"
 
-      - name: Test pip template
-        env:
-          user: fakeUser
-          password: fakePassword
+  test_matrix:
+    runs-on: ubuntu-latest
+    name: test matrix
+    needs: version_job
+    matrix:
+      component: [enforcer, validator, auditor]
+    steps:
+      - name: test component build
         run: |
-          cat << EOT >> pip.conf
-          [global]
-          index-url = https://${{ env.user }}:${{ env.password }}@example.jfrog.io/example/api/pypi/pypi/simple
-          EOT
-
-      - name: upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: pip-conf
-          path: pip.conf
+          echo "docker tag test-app/${{ matrix.component }}:${{ needs.version_job.outputs.version }}"
