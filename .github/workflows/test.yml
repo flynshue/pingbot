@@ -61,17 +61,17 @@ jobs:
         uses: actions/checkout@v3
 
       - name: create a dummy version file
-        run: echo "${{ needs.version.outputs.version }}" > VERSION
+        run: echo "${{ needs.version.outputs.version }}" > /tmp/VERSION
 
       - name: test component build
         run: |
           echo "docker tag test-app/${{ matrix.component }}:${{ needs.version.outputs.version }}"
 
       - name: read version file
-        run: cat VERSION
+        run: cat /tmp/VERSION
 
       - name: remove version file
-        run: rm VERSION
+        run: rm /tmp/VERSION
 
   tag:
     runs-on: ubuntu-latest
