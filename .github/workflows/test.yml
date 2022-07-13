@@ -45,6 +45,9 @@ jobs:
         run: |
           echo "${{ steps.versions.outputs.version }}"
 
+      - name: create a dummy version file
+        run: echo "${{ steps.versions.outputs.version }}" > VERSION
+
   test_matrix:
     runs-on: ubuntu-latest
     name: test matrix
@@ -56,3 +59,12 @@ jobs:
       - name: test component build
         run: |
           echo "docker tag test-app/${{ matrix.component }}:${{ needs.version_job.outputs.version }}"
+
+  clean_up:
+    runs-on: ubuntu-latest
+    steps:
+      - name: read version file
+        run: cat VERSION
+
+      - name: remove version file
+        run: rm VERSION
