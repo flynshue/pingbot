@@ -75,7 +75,7 @@ jobs:
         working-directory: docs
 
       - name: remove version file
-        run: rm /tmp/VERSION
+        run: rm VERSION
 
   tag:
     runs-on: ubuntu-latest
@@ -97,7 +97,7 @@ jobs:
     if: github.event_name == 'push'
     strategy:
       matrix:
-        component: [enforcer, validator, auditor]
+        component: [foo]
     steps:
       - name: promte image
         run: echo "promte docker image ${{ matrix.component }}"
