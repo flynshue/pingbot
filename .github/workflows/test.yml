@@ -72,7 +72,7 @@ jobs:
 
       - name: test working-directory
         run: echo "test" > test
-        workding-directory: docs
+        working-directory: docs
 
       - name: remove version file
         run: rm /tmp/VERSION
