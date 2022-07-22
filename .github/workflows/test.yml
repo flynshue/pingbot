@@ -55,20 +55,24 @@ jobs:
     needs: version
     strategy:
       matrix:
-        component: [enforcer, validator, auditor]
+        component: [foo]
     steps:
       - name: checkout
         uses: actions/checkout@v3
 
       - name: create a dummy version file
-        run: echo "${{ needs.version.outputs.version }}" > /tmp/VERSION
+        run: echo "${{ needs.version.outputs.version }}" > VERSION
 
       - name: test component build
         run: |
           echo "docker tag test-app/${{ matrix.component }}:${{ needs.version.outputs.version }}"
 
       - name: read version file
-        run: cat /tmp/VERSION
+        run: cat VERSION
+
+      - name: test working-directory
+        run: echo "test" > test
+        workding-directory: docs
 
       - name: remove version file
         run: rm /tmp/VERSION
