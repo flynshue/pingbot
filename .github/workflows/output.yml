@@ -17,4 +17,4 @@ jobs:
 
       - name: Print time from action
         run: |
-          echo "${{ steps.id.outputs.time }}"
+          echo "${{ steps.test.outputs.time }}"
