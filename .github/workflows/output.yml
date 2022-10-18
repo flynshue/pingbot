@@ -11,10 +11,11 @@ jobs:
     steps:
       - name: Test new gha output commands
         id: test
-        uses: flynshue/test-workflows/output@test-sha
+        uses: flynshue/test-workflows/output-go@test-sha
         with:
           who-to-greet: 'Mona the Octocat'
 
       - name: Print time from action
         run: |
           echo "${{ steps.test.outputs.time }}"
+          echo "${{ steps.test.outputs.greet }}"
