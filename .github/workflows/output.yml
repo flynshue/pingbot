@@ -12,6 +12,8 @@ jobs:
       - name: Test new gha output commands
         id: test
         uses: flynshue/test-workflows/output@test-sha
+        with:
+          who-to-greet: 'Mona the Octocat'
 
       - name: Print time from action
         run: |
