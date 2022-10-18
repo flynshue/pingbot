@@ -43,7 +43,7 @@ jobs:
         id: versions
         run: |
           tag_version=$(echo "${{ github.sha }}-${{ steps.generate-uuid.outputs.uuid }} | sha1sum")
-          echo "::set-output name=version::v$(date +%Y-%d-%m)-${tag_version:0:4}"
+          echo "version=v$(date +%Y-%d-%m)-${tag_version:0:4}" >> $GITHUB_OUTPUT
 
       - name: print version
         run: |
