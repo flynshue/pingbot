@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Generate new tag version
         id: version
-        uses: flynshue/version-action
+        uses: flynshue/version-action@main
 
       - name: Print version from action
         run: |
