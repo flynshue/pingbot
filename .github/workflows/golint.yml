@@ -20,7 +20,7 @@ jobs:
       - name: lint
         run: |
           set -x
-          # go install golang.org/x/lint/golint@latest
+          go install golang.org/x/lint/golint@latest
           go get -u golang.org/x/lint/golint@latest
           unformatted_files=$(go fmt ./.../ | wc -l)
           [[ "$unformatted_files" -eq "0" ]]
