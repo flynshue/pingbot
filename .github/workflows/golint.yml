@@ -24,5 +24,4 @@ jobs:
           unformatted_files=$(go fmt ./.../ | wc -l)
           [[ "$unformatted_files" -eq "0" ]]
           # $(go list -f {{.Target}} golang.org/x/lint/golint) ./.../
-          GOLINT_PATH=$(go list -f {{.Target}} golang.org/x/lint/golint)
-          ls -l $GOLINT_PATH
+          ls -l /home/runner/go/bin/
