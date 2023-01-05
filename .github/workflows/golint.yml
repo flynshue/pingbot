@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: install go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v3
         with:
           go-version: '1.18'
 
@@ -23,5 +23,5 @@ jobs:
           go get -u golang.org/x/lint/golint
           unformatted_files=$(go fmt ./.../ | wc -l)
           [[ "$unformatted_files" -eq "0" ]]
-          # $(go list -f {{.Target}} golang.org/x/lint/golint) ./.../
-          ls -l /home/runner/go/bin/
+          $(go list -f {{.Target}} golang.org/x/lint/golint) ./.../
+          # ls -l /home/runner/go/bin/
