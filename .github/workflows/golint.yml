@@ -23,5 +23,6 @@ jobs:
           go get -u golang.org/x/lint/golint
           unformatted_files=$(go fmt ./.../ | wc -l)
           [[ "$unformatted_files" -eq "0" ]]
-          which golint
+          # which golint
           # $(go list -f {{.Target}} golang.org/x/lint/golint) ./.../
+          go list -f {{.Target}} golang.org/x/lint/golint
