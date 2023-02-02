@@ -22,7 +22,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:
           secret-ids: |
-            arn:aws:secretsmanager:us-east-1:187592727246:secret:test-app/envFile
+            test-app/envFile
           parse-json-secrets: true
 
   test-secrets:
