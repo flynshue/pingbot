@@ -32,7 +32,7 @@ jobs:
 
       - name: test
         run: |
-          if [[ ${{ env.TEST_APP_TEST_SECRET_USER }} == "diegor" ]]; then
+          if [[ ${{ steps.test-app.outputs.test-app-user }} == "diegor" ]]; then
             echo "success!"
           else
             echo "no secret"
