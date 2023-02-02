@@ -30,6 +30,14 @@ jobs:
         run: |
           echo "test-app-user=${{ env.TEST_APP_TEST_SECRET_USER }}" >> $GITHUB_OUTPUT
 
+      - name: test
+        run: |
+          if [[ ${{ env.TEST_APP_TEST_SECRET_USER }} == "diegor" ]]; then
+            echo "success!"
+          else
+            echo "no secret"
+          fi
+
   test-secrets:
     runs-on: ubuntu-latest
     needs: grab-secrets
