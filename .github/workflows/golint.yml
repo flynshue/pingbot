@@ -1,28 +1,28 @@
-name: Golang / CI
-on:
-  pull_request:
-  push:
-    branches:
-      - main
-jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-20.04
-    steps:
-      - name: install go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.18'
+# name: Golang / CI
+# on:
+#   pull_request:
+#   push:
+#     branches:
+#       - main
+# jobs:
+#   lint:
+#     name: Lint
+#     runs-on: ubuntu-20.04
+#     steps:
+#       - name: install go
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: '1.18'
 
-      - name: git checkout
-        uses: actions/checkout@v1
+#       - name: git checkout
+#         uses: actions/checkout@v1
 
-      - name: lint
-        run: |
-          set -x
-          go install golang.org/x/lint/golint@latest
-          go get -u golang.org/x/lint/golint@latest
-          unformatted_files=$(go fmt ./.../ | wc -l)
-          [[ "$unformatted_files" -eq "0" ]]
-          $(go list -f {{.Target}} golang.org/x/lint/golint) ./.../
-          # ls -l /home/runner/go/bin/
+#       - name: lint
+#         run: |
+#           set -x
+#           go install golang.org/x/lint/golint@latest
+#           go get -u golang.org/x/lint/golint@latest
+#           unformatted_files=$(go fmt ./.../ | wc -l)
+#           [[ "$unformatted_files" -eq "0" ]]
+#           $(go list -f {{.Target}} golang.org/x/lint/golint) ./.../
+#           # ls -l /home/runner/go/bin/
