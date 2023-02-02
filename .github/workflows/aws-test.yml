@@ -39,7 +39,8 @@ jobs:
 
       - name: test
         run: |
-          if [[ ${{ needs.grab-secrets.outputs.test-app-user }} == "diegor"]]; then
+          TEST_APP_USER=${{ needs.grab-secrets.outputs.test-app-user }}
+          if [[ $TEST_APP_USER == "diegor" ]]; then
             echo "success!"
           else
             echo "no secret"
