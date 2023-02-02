@@ -6,7 +6,7 @@ jobs:
     name: grab fake secrets
     runs-on: ubuntu-latest
     outputs:
-      test-app-user: ${{ env.TEST_APP_TEST_SECRET_USER }}
+      test-app-user: ${{ steps.test-app.outputs.test-app-user }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -25,8 +25,9 @@ jobs:
             test-app/test-secret
           parse-json-secrets: true
 
-      - name: print fake secret
-        run: echo ${{ env.TEST_APP_TEST_SECRET_USER }}
+      - name: set fake secret output
+        id: test-app
+        run: echo "test-app-user=${{ env.TEST_APP_TEST_SECRET_USER }}" >> $GITHUB_OUTPUT
 
   test-secrets:
     runs-on: ubuntu-latest
