@@ -6,7 +6,7 @@ jobs:
     name: grab fake secrets
     runs-on: ubuntu-latest
     outputs:
-      test-app-var1: ${{ env.TEST_APP_ENVFILE.TEST_APP_VAR1 }}
+      test-app-user: ${{ env.TEST_APP_TEST_SECRET_USER }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -22,7 +22,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:
           secret-ids: |
-            test-app/envFile
+            test-app/test-secret
           parse-json-secrets: true
 
   test-secrets:
@@ -30,4 +30,4 @@ jobs:
     needs: grab-secrets
     steps:
       - name: print fake secret
-        run: echo ${{ needs.grab-secrets.outputs.test-app-var1 }}
+        run: echo ${{ needs.grab-secrets.outputs.test-app-user }}
