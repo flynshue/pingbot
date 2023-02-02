@@ -27,7 +27,8 @@ jobs:
 
       - name: set fake secret output
         id: test-app
-        run: echo "test-app-user=${{ env.TEST_APP_TEST_SECRET_USER }}" >> $GITHUB_OUTPUT
+        run: |
+          echo "test-app-user=${{ env.TEST_APP_TEST_SECRET_USER }}" >> $GITHUB_OUTPUT
 
   test-secrets:
     runs-on: ubuntu-latest
@@ -35,3 +36,11 @@ jobs:
     steps:
       - name: print fake secret
         run: echo ${{ needs.grab-secrets.outputs.test-app-user }}
+
+      - name: test
+        run: |
+          if [[ $${{ needs.grab-secrets.outputs.test-app-user }} == "diegor"]]; then
+            echo "success!"
+          else
+            echo "no secret"
+          fi
