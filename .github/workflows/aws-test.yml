@@ -24,7 +24,7 @@ jobs:
 
   test-secrets:
     runs-on: ubuntu-latest
-    need: grab-secrets
+    needs: grab-secrets
     steps:
       - name: print fake secret
         run: echo ${{ needs.grab-secrets.outputs.test-app-var1 }}
