@@ -25,6 +25,9 @@ jobs:
             test-app/test-secret
           parse-json-secrets: true
 
+      - name: print fake secret
+        run: echo ${{ needs.grab-secrets.outputs.test-app-user }}
+
   test-secrets:
     runs-on: ubuntu-latest
     needs: grab-secrets
