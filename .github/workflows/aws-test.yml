@@ -8,48 +8,17 @@ jobs:
     outputs:
       test-app-user: ${{ steps.test-app.outputs.test-app-user }}
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: verify identity
-        run: aws sts get-caller-identity
-
-      - name: grab secret
-        uses: aws-actions/aws-secretsmanager-get-secrets@v1
-        with:
-          secret-ids: |
-            test-app/test-secret
-          parse-json-secrets: true
-
-      - name: set fake secret output
-        id: test-app
+      - name: Add some env vars
         run: |
-          echo "test-app-user=${{ env.TEST_APP_TEST_SECRET_USER }}" >> $GITHUB_OUTPUT
+          app_var1=appVar1
+          echo "APP_VAR1=${app_var1}" >> $GITHUB_ENV
+          echo "::add-mask::${app_var1}"
 
-      - name: test
+      - name: Update env vars
         run: |
-          if [[ ${{ steps.test-app.outputs.test-app-user }} == "diegor" ]]; then
-            echo "success!"
-          else
-            echo "no secret"
-          fi
+          echo "APP_VAR1=" >> $GITHUB_ENV
 
-  test-secrets:
-    runs-on: ubuntu-latest
-    needs: grab-secrets
-    steps:
-      - name: print fake secret
-        run: echo ${{ needs.grab-secrets.outputs.test-app-user }}
-
-      - name: test
+      - name:
         run: |
-          TEST_APP_USER=${{ needs.grab-secrets.outputs.test-app-user }}
-          if [[ $TEST_APP_USER == "diegor" ]]; then
-            echo "success!"
-          else
-            echo "no secret"
-          fi
+          printenv
+
