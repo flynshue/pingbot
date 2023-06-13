@@ -1,0 +1,19 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test version action
+    steps:
+      - name: Generate new tag version
+        id: version
+        uses: flynshue/version-action@v0.0.1
+
+
+      - name: Print version from action
+        run: |
+          echo "${{ steps.version.outputs.version }}"
