@@ -15,7 +15,9 @@ jobs:
         env:
           ACTIONS: "create run clean"
         run: |
-          for action in ${ACTIONS[@]}; do mkdir $action; ls $action; done
+          for action in ${ACTIONS[@]}; do mkdir $action; done
+
+      - run: ls -l
 
   #     # Use the output from the `hello` step
   #     - name: Get tag version
