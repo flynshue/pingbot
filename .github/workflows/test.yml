@@ -15,7 +15,7 @@ jobs:
         env:
           ACTIONS: "create run clean"
         run: |
-          for action in ${ACTIONS[@]}; do mkdir $action; done
+          for action in ${ACTIONS}; do mkdir $action; done
 
       - run: ls -l
 
