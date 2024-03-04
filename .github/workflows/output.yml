@@ -17,9 +17,3 @@ jobs:
       - name: Print version from action
         run: |
           echo "${{ steps.version.outputs.version }}"
-
-      - name: Test some arrays
-        env:
-          ACTIONS: "create run clean"
-        run: |
-          for action in ${ACTIONS[@]}; do echo "test $action"; done

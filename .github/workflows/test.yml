@@ -11,6 +11,12 @@ jobs:
     steps:
       - run: echo "hello"
 
+      - name: Test some arrays
+        env:
+          ACTIONS: "create run clean"
+        run: |
+          for action in ${ACTIONS[@]}; do mkdir $action; ls $action; done
+
   #     # Use the output from the `hello` step
   #     - name: Get tag version
   #       run: echo "The tag version ${{ steps.version.outputs.version }}"
