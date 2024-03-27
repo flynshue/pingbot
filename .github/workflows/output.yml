@@ -14,6 +14,15 @@ jobs:
         uses: flynshue/version-action@v0.0.1
 
 
-      - name: Print version from action
+      - name: test expressions
+        id: set
         run: |
-          echo "${{ steps.version.outputs.version }}"
+          echo "always_apply=${{ github.event_name == 'push' }}"
+
+      - name: call expression
+        run: |
+          if ${{ steps.set.outputs.always_apply }}; then
+            echo "don't apply"
+          else
+            echo "apply"
+          fi
