@@ -21,7 +21,7 @@ jobs:
 
       - name: call expression
         run: |
-          if ${{ steps.set.outputs.always_apply }}; then
+          if (${{ steps.set.outputs.always_apply }}); then
             echo "don't apply"
           else
             echo "apply"
