@@ -9,19 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     name: Test version action
     steps:
-      - name: Generate new tag version
-        id: version
-        uses: flynshue/version-action@v0.0.1
-
+      # - name: Generate new tag version
+      #   id: version
+      #   uses: flynshue/version-action@v0.0.1
 
       - name: test expressions
+        env:
+          APPLY: ${{ github.event_name == 'push' }}
         id: set
         run: |
-          echo "always_apply=${{ github.event_name == 'push' }}"
-
-      - name: call expression
-        run: |
-          if (${{ steps.set.outputs.always_apply }}); then
+          if ${{ env.APPLY }}; then
             echo "don't apply"
           else
             echo "apply"
