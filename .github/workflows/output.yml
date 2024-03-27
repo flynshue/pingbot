@@ -19,7 +19,7 @@ jobs:
         id: set
         run: |
           if ${{ env.APPLY }}; then
-            echo "don't apply"
-          else
             echo "apply"
+          else
+            echo "don't apply"
           fi
