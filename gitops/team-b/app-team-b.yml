@@ -1,6 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: app-rblack-sbx-app1
+  name: app-rblack-team-b
 spec:
   project: team-b
