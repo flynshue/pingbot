@@ -92,6 +92,10 @@ jobs:
             
           refresh-message-position: true
           message-id: ${{ steps.app-info.outputs.app_name }}
+
+      - name: Get event state
+        run: |
+          echo "${{ github.event.action }}  ${{ github.event.label.name }}"
       
       - name: Remove App from Sync Window
         if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && !contains(github.event.label.name, 'deploy'))
