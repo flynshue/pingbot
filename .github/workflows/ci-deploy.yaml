@@ -1,0 +1,47 @@
+on:
+  pull_request:
+  types:
+      - ready_for_review
+      - converted_to_draft
+      - opened
+      - synchronize
+      - reopened
+      - closed
+      - labeled
+      - unlabeled
+  paths:
+      - 'gitops/**'
+      - '!gitops/projects/**'
+      - '!gitops/**/namespaces/**'
+      - '.github/workflows/ci-deploy.yaml'
+      - '!gitops/**/prod/**'
+name: Application CI
+jobs:
+  get-applications:
+    runs-on: ubuntu-22.04
+    outputs:
+      modified: ${{ steps.files.outputs.modified_files }}
+      added: ${{ steps.files.outputs.added_files }}
+      deleted: ${{ steps.removed.outputs.deleted_files }}
+      renamed: ${{ steps.files.outputs.renamed_files }}
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get changed gitops files
+        id: files
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c
+        with:
+          json: true
+          escape_json: false
+          files: |
+            gitops/**
+            !gitops/**/namespaces/**
+            !gitops/projects/**
+            !gitops/**/prod/**
+      - name: List all changed files
+        run: |
+          echo 'Modified: ${{ steps.files.outputs.modified_files }}'
+          echo 'Added: ${{ steps.files.outputs.added_files }}'
+          echo 'Renamed: ${{ steps.files.outputs.renamed_files }}'
