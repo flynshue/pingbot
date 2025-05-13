@@ -98,7 +98,7 @@ jobs:
           EVENT_DATA: ${{ toJSON(github.event) }}
         run: |
           echo "github.event.action == ${{ github.event.action }}  github.event.label.name == ${{ github.event.label.name }}"
-          jq -r '.|keys' <<< $EVENT_DATA
+          jq -r '.pull_request|keys' <<< $EVENT_DATA
       
       - name: Remove App from Sync Window
         if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && contains(github.event.label.name, 'deploy'))
