@@ -96,9 +96,10 @@ jobs:
       - name: Get event state
         run: |
           echo "github.event.action == ${{ github.event.action }}  github.event.label.name == ${{ github.event.label.name }}"
+          echo "github.event == ${{ github.event }}"
       
       - name: Remove App from Sync Window
-        if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && !contains(github.event.label.name, 'deploy'))
+        if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && contains(github.event.label.name, 'deploy'))
         run: |
           echo "Remove ${{ steps.app-info.outputs.app_name }} sync window from ${{ steps.app-info.outputs.project }}"
       
