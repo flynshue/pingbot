@@ -95,13 +95,7 @@ jobs:
       - name: Remove App from Sync Window
         if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && !contains(github.event.label.name, 'deploy'))
         run: |
-          if [ ${{ github.event.action }} == "closed" ]; then
-            echo "PR was closed"
-          elif [ ${{ github.event.action == 'unlabeled' }} ]  && [ ${{ !(contains(github.event.pull_request.labels.*.name, 'deploy') }} ]; then
-            echo "deploy labeled removed"
-          else
-            echo "Event: ${{ github.event.action }}\n ${{ github.event.pull_request.labels }}"
-          fi
+          echo "Remove ${{ steps.app-info.outputs.app_name }} sync window from ${{ steps.app-info.outputs.project }}"
       
       - name: Remove Ignore Differences
         if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && !contains(github.event.label.name, 'deploy')) && inputs.new-app == false
