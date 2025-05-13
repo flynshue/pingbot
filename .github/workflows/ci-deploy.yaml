@@ -47,7 +47,7 @@ jobs:
           echo 'Renamed: ${{ steps.files.outputs.renamed_files }}'
   deploy-added-application:
     needs: [get-applications]
-    if: ${{ needs.get-applications.outputs.added != '[]' && needs.get-applications.outputs.added != '' && (contains(github.event.pull_request.labels.*.name, 'deploy') || github.event.action == 'unlabeled') }}
+    if: ${{ (needs.get-applications.outputs.added != '[]' && needs.get-applications.outputs.added != '') && (contains(github.event.pull_request.labels.*.name, 'deploy') || github.event.action == 'unlabeled') }}
     strategy:
       max-parallel: 1
       matrix:
