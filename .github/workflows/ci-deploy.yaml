@@ -1,6 +1,6 @@
 on:
   pull_request:
-  types:
+    types:
       - ready_for_review
       - converted_to_draft
       - opened
@@ -9,7 +9,7 @@ on:
       - closed
       - labeled
       - unlabeled
-  paths:
+    paths:
       - 'gitops/**'
       - '!gitops/projects/**'
       - '!gitops/**/namespaces/**'
