@@ -95,7 +95,7 @@ jobs:
 
       - name: Get event state
         env:
-          EVENT_DATA: ${{ toJSON(gitub.event) }}
+          EVENT_DATA: ${{ toJSON(github.event) }}
         run: |
           echo "github.event.action == ${{ github.event.action }}  github.event.label.name == ${{ github.event.label.name }}"
           jq -r '.|keys' <<< $EVENT_DATA
