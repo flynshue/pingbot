@@ -68,6 +68,7 @@ jobs:
             echo "create app ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
           else
             echo "update app ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+          fi
 
           cat ${{ inputs.file }}
       
