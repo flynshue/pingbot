@@ -9,11 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     name: Test version action
     steps:
-      - name: Generate new tag version
-        id: version
-        uses: flynshue/version-action@v0.0.1
+      # - name: Generate new tag version
+      #   id: version
+      #   uses: flynshue/version-action@v0.0.1
 
-
-      - name: Print version from action
+      - name: test expressions
+        env:
+          APPLY: ${{ github.event_name == 'push' }}
+        id: set
         run: |
-          echo "${{ steps.version.outputs.version }}"
+          if ${{ env.APPLY }}; then
+            echo "apply"
+          else
+            echo "don't apply"
+          fi
