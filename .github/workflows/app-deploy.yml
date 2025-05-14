@@ -111,7 +111,7 @@ jobs:
           echo "Remove ignore differences on existing app ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }} because event was closed or deploy label removed from PR"
 
       - name: Delete any hanging applications from PR
-        if: (github.event.action == 'closed' || (github.event.action == 'unlabeled' && !contains(github.event.label.name, 'deploy'))) && steps.kind.outputs.app_kind != 'ApplicationSet'
+        if: (github.event.action == 'closed' || (github.event.action == 'unlabeled' && contains(github.event.label.name, 'deploy'))) && steps.kind.outputs.app_kind != 'ApplicationSet'
         continue-on-error: true
         run: |
           echo "Need to delete app ${{ steps.app-info.outputs.app}}"
