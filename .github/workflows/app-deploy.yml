@@ -106,7 +106,7 @@ jobs:
           echo "Remove ${{ steps.app-info.outputs.app_name }} sync window from ${{ steps.app-info.outputs.project }}"
       
       - name: Remove Ignore Differences
-        if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && !contains(github.event.label.name, 'deploy')) && inputs.new-app == false
+        if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && contains(github.event.label.name, 'deploy')) && inputs.new-app == false
         run: |
           echo "Remove ignore differences on existing app ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }} because event was closed or deploy label removed from PR"
 
