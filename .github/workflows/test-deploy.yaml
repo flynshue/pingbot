@@ -57,6 +57,10 @@ jobs:
           echo EOF
           } >> "$GITHUB_OUTPUT"
 
+      - name: print outputs
+        run: |
+          echo ${{ steps.app-matrix.outputs.app_clusters }}
+
   # add-cluster:
   #   runs-on: ubuntu-latest
   #   needs: [install]
