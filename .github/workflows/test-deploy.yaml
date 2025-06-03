@@ -44,8 +44,12 @@ jobs:
 
       - name: Get app app_clusters
         run: |
-          for i in ${{ matrix.app_clusters }}; do
-            echo "$i"; done
+          echo '${{ toJson(matrix.app_clusters) }}' | jq -c '.[]' | while read cluster; do
+            app_cluster_name=$(echo "$cluster" | jq -r '.app_cluster_name')
+            s3_bucket=$(echo "$cluster" | jq -r '.s3_bucket')
+            echo "Adding cluster: $app_cluster_name with bucket: $s3_bucket"
+            # Add your cluster logic here
+          done
 
       # - name: set app cluster matrix
       #   id: app-matrix
