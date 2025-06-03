@@ -29,6 +29,9 @@ jobs:
                 s3_bucket: lab-cluster-state/lab-app2-cluster
 
     runs-on: ubuntu-latest
+    outputs:
+      app_clusters: ${{ steps.app-matrix.outputs.matrix }}
+      mgmt_cluster: ${{ steps.app-matrix.outputs.mgmt-cluster }}
     steps:
       - name: git checkout
         uses: actions/checkout@v4
@@ -42,3 +45,21 @@ jobs:
       - name: Get app app_clusters
         run: |
           echo "mgmt cluster ${{ matrix.cluster }} app clusters ${{ toJson(matrix.app_clusters) }}"
+
+      - name: set app cluster ma†rix
+        id: app-matrix
+        run: |
+          echo "matrix=${{ toJson(matrix.app_cluster) }}" >> GITHUB_OUTPUT
+          echo "mgmt-cluster=${{ matrix.cluster }}" >> GITHUB_OUTPUT"
+
+  add-cluster:
+    needs: [install]
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix: ${{ fromJson(needs.install.outputs.app_clusters) }}
+    steps:
+      - name: Get s3 bucket info
+        run: |
+          echo "copy data from ${{ matrix.s3_bucket }}"
