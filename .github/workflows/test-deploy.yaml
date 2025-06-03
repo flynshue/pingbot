@@ -47,7 +47,7 @@ jobs:
           echo '${{ toJson(matrix.app_clusters) }}' | jq -c '.[]' | while read cluster; do
             app_cluster_name=$(echo "$cluster" | jq -r '.app_cluster_name')
             s3_bucket=$(echo "$cluster" | jq -r '.s3_bucket')
-            echo "Adding cluster: $app_cluster_name with bucket: $s3_bucket"
+            echo "Adding cluster: $app_cluster_name with bucket: $s3_bucket to mgmt cluster ${{ matrix.cluster }}"
             # Add your cluster logic here
           done
 
