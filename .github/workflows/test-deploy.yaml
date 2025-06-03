@@ -49,7 +49,7 @@ jobs:
       - name: set app cluster matrix
         id: app-matrix
         run: |
-          clusters=${{ toJson(matrix.app_clusters) }}
+          clusters=${{ matrix.app_clusters }}
           echo "mgmt-cluster=${{ matrix.cluster }}" >> "$GITHUB_OUTPUT"
           {
           echo 'app_clusters<<EOF'
