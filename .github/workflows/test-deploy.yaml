@@ -68,7 +68,8 @@ jobs:
       id-token: write
       contents: read
     strategy:
-      matrix: ${{ needs.install.outputs.app_clusters }}
+      matrix:
+        include: ${{ fromJson(needs.install.outputs.app_clusters) }}
     steps:
       - name: Get s3 bucket info
         run: |
