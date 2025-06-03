@@ -44,7 +44,7 @@ jobs:
 
       - name: Get app app_clusters
         run: |
-          for i in ${{ toJson(matrix.app_clusters) }}; do
+          for i in ${{ matrix.app_clusters }}; do
             echo "$i"; done
 
       # - name: set app cluster matrix
