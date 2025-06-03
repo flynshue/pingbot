@@ -50,8 +50,12 @@ jobs:
         id: app-matrix
         run: |
           clusters=${{ toJson(matrix.app_clusters) }}
-          echo "app_clusters=$(echo $clusters)" >> "$GITHUB_OUTPUT"
           echo "mgmt-cluster=${{ matrix.cluster }}" >> "$GITHUB_OUTPUT"
+          {
+          echo 'app_clusters<<EOF'
+          echo $clusters
+          echo EOF
+          } >> "$GITHUB_OUTPUT"
 
   # add-cluster:
   #   runs-on: ubuntu-latest
