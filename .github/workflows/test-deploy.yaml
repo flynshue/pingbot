@@ -15,6 +15,7 @@ jobs:
         include:
           - cluster: sandbox-mgmt
             environment: sandbox
+            runner: ubuntu-latest
             app_clusters:
               - app_cluster_name: sbx-app1-cluster
                 s3_bucket: sandbox-cluster-state/sbx-app1-cluster
@@ -28,7 +29,7 @@ jobs:
               - app_cluster_name: lab-app2-cluster
                 s3_bucket: lab-cluster-state/lab-app2-cluster
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     # outputs:
     #   app_clusters: ${{ toJson(matrix.app_clusters) }}
     #   mgmt_cluster: ${{ steps.app-matrix.outputs.mgmt-cluster }}
@@ -40,42 +41,11 @@ jobs:
 
       - name: Get mmgt cluster
         run: |
-          echo "mgmt cluster ${{ matrix.cluster }} in ${{ matrix.environment }}"
+          echo "install mgmt cluster ${{ matrix.cluster }} in ${{ matrix.environment }}"
 
-      - name: Get app app_clusters
-        run: |
-          echo '${{ toJson(matrix.app_clusters) }}' | jq -c '.[]' | while read cluster; do
-            app_cluster_name=$(echo "$cluster" | jq -r '.app_cluster_name')
-            s3_bucket=$(echo "$cluster" | jq -r '.s3_bucket')
-            echo "Adding cluster: $app_cluster_name with bucket: $s3_bucket to mgmt cluster ${{ matrix.cluster }}"
-            # Add your cluster logic here
-          done
 
-      # - name: set app cluster matrix
-      #   id: app-matrix
-      #   run: |
-      #     clusters=${{ matrix.app_clusters }}
-      #     echo "mgmt-cluster=${{ matrix.cluster }}" >> "$GITHUB_OUTPUT"
-      #     {
-      #     echo 'app_clusters<<EOF'
-      #     echo $clusters
-      #     echo EOF
-      #     } >> "$GITHUB_OUTPUT"
-
-      # - name: print outputs
-      #   run: |
-      #     echo ${{ toJson(steps.app-matrix.outputs.app_clusters) }}
-
-  # add-cluster:
-  #   runs-on: ubuntu-latest
-  #   needs: [install]
-  #   permissions:
-  #     id-token: write
-  #     contents: read
-  #   strategy:
-  #     matrix:
-  #       include: ${{ fromJson(needs.install.outputs.app_clusters) }}
-  #   steps:
-  #     - name: Get s3 bucket info
-  #       run: |
-  #         echo "copy data from ${{ matrix.s3_bucket }}"
+      - name: add cluster
+        uses: flynshue/pingbot/.github/workflows/add-cluster.yaml@ci-deploy
+        with:
+          runner: ${{ matrix.runner }}
+          mgmt-cluster: ${{ matrix.cluster }}

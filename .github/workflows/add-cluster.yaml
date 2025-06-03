@@ -1,0 +1,23 @@
+on:
+  workflow_call:
+    inputs:
+      runner:
+        required: true
+        type: string
+      mgmt-cluster:
+        required: true
+        type: string
+
+
+jobs:
+  add-cluster:
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get mgmt cluster
+        run: |
+          echo "${{ inputs.mgmt-cluster }}"
