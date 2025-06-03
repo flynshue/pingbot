@@ -41,4 +41,4 @@ jobs:
 
       - name: Get app app_clusters
         run: |
-          echo "mgmt cluster ${{ matrix.cluster }} app clusters ${{ matrix.app_clusters }}"
+          echo "mgmt cluster ${{ matrix.cluster }} app clusters ${{ toJson(matrix.app_clusters) }}"
