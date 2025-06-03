@@ -67,9 +67,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    # strategy:
-    #   matrix: ${{ fromJson(needs.install.outputs.app_clusters) }}
+    strategy:
+      matrix: ${{ fromJson(needs.install.outputs.app_clusters) }}
     steps:
       - name: Get s3 bucket info
         run: |
-          echo "copy data from ${{ needs.install.outputs.app_clusters }}"
+          echo "copy data from ${{ matrix.s3_bucket }}"
