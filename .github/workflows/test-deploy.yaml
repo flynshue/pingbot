@@ -50,7 +50,7 @@ jobs:
         id: app-matrix
         run: |
           echo "matrix=${{ matrix.app_clusters }}" >> GITHUB_OUTPUT
-          echo "mgmt-cluster=${{ matrix.cluster }}" >> GITHUB_OUTPUT"
+          echo "mgmt-cluster=${{ matrix.cluster }}" >> GITHUB_OUTPUT
 
   add-cluster:
     runs-on: ubuntu-latest
