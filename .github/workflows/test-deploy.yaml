@@ -53,6 +53,7 @@ jobs:
           echo "mgmt-cluster=${{ matrix.cluster }}" >> GITHUB_OUTPUT"
 
   add-cluster:
+    runs-on: ubuntu-latest
     needs: [install]
     permissions:
       id-token: write
