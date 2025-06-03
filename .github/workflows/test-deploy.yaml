@@ -30,7 +30,7 @@ jobs:
 
     runs-on: ubuntu-latest
     outputs:
-      app_clusters: ${{ matrix.app_clusters }}
+      app_clusters: ${{ toJson(matrix.app_clusters) }}
       mgmt_cluster: ${{ steps.app-matrix.outputs.mgmt-cluster }}
     steps:
       - name: git checkout
