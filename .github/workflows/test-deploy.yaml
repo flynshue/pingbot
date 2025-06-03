@@ -63,7 +63,7 @@ jobs:
     steps:
       - name: get clusters
         run: |
-          echo "clusters ${{ tonJson(needs.install.outputs.app_clusters) }}, mgmt cluster ${{ needs.install.outputs.mgmt_cluster }}"
+          echo "clusters ${{ toJson(needs.install.outputs.app_clusters) }}, mgmt cluster ${{ needs.install.outputs.mgmt_cluster }}"
       # - name: Get s3 bucket info
       #   run: |
       #     echo "copy data from ${{ matrix.s3_bucket }}"
