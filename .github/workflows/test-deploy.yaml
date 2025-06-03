@@ -30,7 +30,7 @@ jobs:
 
     runs-on: ubuntu-latest
     outputs:
-      app_clusters: ${{ steps.app-matrix.outputs.matrix }}
+      app_clusters: ${{ ma†rix.app_clusters }}
       mgmt_cluster: ${{ steps.app-matrix.outputs.mgmt-cluster }}
     steps:
       - name: git checkout
@@ -46,30 +46,30 @@ jobs:
         run: |
           echo "mgmt cluster ${{ matrix.cluster }} app clusters ${{ toJson(matrix.app_clusters) }}"
 
-      - name: set app cluster matrix
-        id: app-matrix
-        run: |
-          clusters=${{ matrix.app_clusters }}
-          echo "mgmt-cluster=${{ matrix.cluster }}" >> "$GITHUB_OUTPUT"
-          {
-          echo 'app_clusters<<EOF'
-          echo $clusters
-          echo EOF
-          } >> "$GITHUB_OUTPUT"
+      # - name: set app cluster matrix
+      #   id: app-matrix
+      #   run: |
+      #     clusters=${{ matrix.app_clusters }}
+      #     echo "mgmt-cluster=${{ matrix.cluster }}" >> "$GITHUB_OUTPUT"
+      #     {
+      #     echo 'app_clusters<<EOF'
+      #     echo $clusters
+      #     echo EOF
+      #     } >> "$GITHUB_OUTPUT"
 
-      - name: print outputs
-        run: |
-          echo ${{ steps.app-matrix.outputs.app_clusters }}
+      # - name: print outputs
+      #   run: |
+      #     echo ${{ toJson(steps.app-matrix.outputs.app_clusters) }}
 
-  # add-cluster:
-  #   runs-on: ubuntu-latest
-  #   needs: [install]
-  #   permissions:
-  #     id-token: write
-  #     contents: read
-  #   strategy:
-  #     matrix: ${{ fromJson(needs.install.outputs.app_clusters) }}
-  #   steps:
-  #     - name: Get s3 bucket info
-  #       run: |
-  #         echo "copy data from ${{ matrix.s3_bucket }}"
+  add-cluster:
+    runs-on: ubuntu-latest
+    needs: [install]
+    permissions:
+      id-token: write
+      contents: read
+    # strategy:
+    #   matrix: ${{ fromJson(needs.install.outputs.app_clusters) }}
+    steps:
+      - name: Get s3 bucket info
+        run: |
+          echo "copy data from ${{ needs.install.outputs.app_clusters }}"
