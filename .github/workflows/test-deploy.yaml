@@ -49,7 +49,7 @@ jobs:
       - name: set app cluster matrix
         id: app-matrix
         run: |
-          echo "matrix=${{ toJson(matrix.app_clusters) }}" >> "$GITHUB_OUTPUT"
+          echo "matrix=${{ matrix.app_clusters }}" >> "$GITHUB_OUTPUT"
           echo "mgmt-cluster=${{ matrix.cluster }}" >> "$GITHUB_OUTPUT"
 
   add-cluster:
@@ -63,7 +63,7 @@ jobs:
     steps:
       - name: get clusters
         run: |
-          echo "clusters ${{ needs.install.outputs.app_clusters }}, mgmt cluster ${{ needs.install.outputs.mgmt_cluster }}"
+          echo "clusters ${{ tonJson(needs.install.outputs.app_clusters) }}, mgmt cluster ${{ needs.install.outputs.mgmt_cluster }}"
       # - name: Get s3 bucket info
       #   run: |
       #     echo "copy data from ${{ matrix.s3_bucket }}"
