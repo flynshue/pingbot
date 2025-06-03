@@ -1,0 +1,40 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+name: Test Deploy Matrix
+jobs:
+  install:
+    permissions: 
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - cluster: sandbox-mgmt
+            environment: sandbox
+            app_clusters:
+              - app_cluster_name: sbx-app1-cluster
+                s3_bucket: sandbox-cluster-state/sbx-app1-cluster
+              - app_cluster_name: sbx-app2-cluster
+                s3_bucket: sandbox-cluster-state/sbx-app2-cluster
+          - cluster: lab-mgmt
+            environment: lab
+            app_clusters:
+              - app_cluster_name: lab-app1-cluster
+                s3_bucket: lab-cluster-state/lab-app1-cluster
+              - app_cluster_name: lab-app2-cluster
+                s3_bucket: lab-cluster-state/lab-app2-cluster
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get mmgt cluster
+        run: |
+          echo "mgmt cluster ${{ matrix.cluster }} in ${{ matrix.environment }}"
