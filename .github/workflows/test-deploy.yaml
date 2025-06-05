@@ -16,36 +16,79 @@ jobs:
           - cluster: sandbox-mgmt
             environment: sandbox
             runner: ubuntu-latest
-            app_clusters:
-              - app_cluster_name: sbx-app1-cluster
-                s3_bucket: sandbox-cluster-state/sbx-app1-cluster
-              - app_cluster_name: sbx-app2-cluster
-                s3_bucket: sandbox-cluster-state/sbx-app2-cluster
+            account_id: sandbox-id
           - cluster: lab-mgmt
             environment: lab
-            app_clusters:
-              - app_cluster_name: lab-app1-cluster
-                s3_bucket: lab-cluster-state/lab-app1-cluster
-              - app_cluster_name: lab-app2-cluster
-                s3_bucket: lab-cluster-state/lab-app2-cluster
-
+            runner: ubuntu-latest
+            account_id: lab-id
     runs-on: ${{ matrix.runner }}
-    # outputs:
-    #   app_clusters: ${{ toJson(matrix.app_clusters) }}
-    #   mgmt_cluster: ${{ steps.app-matrix.outputs.mgmt-cluster }}
     steps:
       - name: git checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Get account Access Token
+        run: |
+          echo "get access token for account ${{ matrix.account_id }}"
+
+      - name: Auth to cluster
+        run: |
+          echo "auth to cluster ${{ matrix.cluster }}"
+
       - name: Get mmgt cluster
         run: |
-          echo "install mgmt cluster ${{ matrix.cluster }} in ${{ matrix.environment }}"
+          echo "install mgmt cluster ${{ matrix.cluster }} in ${{ matrix.environment }} --label ${{ matrix.account_id }}"
 
-
-      - name: add cluster
-        uses: flynshue/pingbot/.github/workflows/add-cluster.yaml@ci-deploy
+  get-app-clusters:
+    runs-on: ubuntu-22.04
+    outputs:
+        clusters: ${{ steps.create-matrix.outputs.matrix }}
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
         with:
-          runner: ${{ matrix.runner }}
-          mgmt-cluster: ${{ matrix.cluster }}
+          fetch-depth: 0
+      - name: Set search criteria
+        id: searchString
+        run: |
+          if [ ${{ github.event.pull_request.draft }} == 'true' ]
+          then
+            echo "searchString=*sandbox*" >> $GITHUB_OUTPUT
+          elif [ ${{ github.event_name }} == 'pull_request' ]
+          then
+            echo "searchString=*lab*" >> $GITHUB_OUTPUT
+          else
+            echo "searchString=**" >> $GITHUB_OUTPUT
+          fi
+      - name: Save changed deploys files
+        id: files
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c
+        with:
+          files: |
+            argocd/helm/deploys/${{ steps.searchString.outputs.searchString }}.yaml
+      - name: Create matrix of cluster file names
+        id: create-matrix
+        run: |
+          clusters_array=$(yq '.github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
+          echo "matrix=$(echo $clusters_array)" >> $GITHUB_OUTPUT
+          echo "CLUSTERS_ARRAY: $clusters_array)"
+
+  add-clusters:
+    needs: [get-app-clusters, install]
+    strategy:
+      max-parallel: 1
+      matrix:
+        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.app-clusters) }}
+    runs-on: ${{ matrix.app-cluster.runner }}
+    name: Add app cluster ${{ matrix.app-cluster.app_cluster_name }} to argo-cd in ${{ matrix.app-cluster.mgmt_cluster_name }}
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get app cluster kubeadmin from s3
+        id: app-kubeadmin
+        run: |
+          echo "aws s3 cp s3://${{matrix.app-cluster.s3_bucket}}/auth/kubeadmin-password ."
