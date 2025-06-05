@@ -47,7 +47,7 @@ jobs:
 
       - name: Get mmgt cluster
         run: |
-          echo "install mgmt cluster ${{ matrix.mgmt_cluster_nam }} in ${{ matrix.environment }} --label ${{ matrix.account_id }}"
+          echo "install mgmt cluster ${{ matrix.mgmt_cluster_name }} in ${{ matrix.environment }} --label ${{ matrix.account_id }}"
 
   get-app-clusters:
     needs: [install, get-mgmt-cluster]
