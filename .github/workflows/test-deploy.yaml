@@ -79,7 +79,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.app-clusters) }}
+        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.clusters) }}
     runs-on: ${{ matrix.app-cluster.runner }}
     name: Add app cluster ${{ matrix.app-cluster.app_cluster_name }} to argo-cd in ${{ matrix.app-cluster.mgmt_cluster_name }}
     steps:
