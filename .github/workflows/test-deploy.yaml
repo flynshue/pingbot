@@ -70,7 +70,7 @@ jobs:
       - name: Create matrix of cluster file names
         id: create-matrix
         run: |
-          clusters_array=$(yq '.github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
+          clusters_array=$(yq '.github.app-clusters[] + .github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
           echo "matrix=$(echo $clusters_array)" >> $GITHUB_OUTPUT
           echo "CLUSTERS_ARRAY: $clusters_array)"
 
