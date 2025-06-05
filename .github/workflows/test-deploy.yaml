@@ -6,21 +6,30 @@ on:
 
 name: Test Deploy Matrix
 jobs:
+  get-mgmt-cluster:
+    runs-on: ubuntu-22.04
+    outputs:
+      mgmt_clusters: ${{ steps.create-matrix.outputs.matrix }}
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create matrix of mgmt cluster file names
+        id: create-matrix
+        run: |
+          clusters_array=$(yq '.github' argocd/helm/deploys/*.yaml -o=json -I=0 | jq  --slurp . )
+          echo "matrix=$(echo $clusters_array)" >> $GITHUB_OUTPUT
+          echo "CLUSTERS_ARRAY: $clusters_array)"
   install:
+    needs: [get-mgmt-cluster]
     permissions: 
       id-token: write
       contents: read
     strategy:
       matrix:
-        include:
-          - cluster: sandbox-mgmt
-            environment: sandbox
-            runner: ubuntu-latest
-            account_id: sandbox-id
-          - cluster: lab-mgmt
-            environment: lab
-            runner: ubuntu-latest
-            account_id: lab-id
+        mgmt_cluster: ${{ fromJson(needs.get-mgmt-cluster.outputs.mgmt_clusters) }}
     runs-on: ${{ matrix.runner }}
     steps:
       - name: git checkout
@@ -34,11 +43,11 @@ jobs:
 
       - name: Auth to cluster
         run: |
-          echo "auth to cluster ${{ matrix.cluster }}"
+          echo "auth to cluster ${{ matrix.mgmt_cluster_name }}"
 
       - name: Get mmgt cluster
         run: |
-          echo "install mgmt cluster ${{ matrix.cluster }} in ${{ matrix.environment }} --label ${{ matrix.account_id }}"
+          echo "install mgmt cluster ${{ matrix.mgmt_cluster_nam }} in ${{ matrix.environment }} --label ${{ matrix.account_id }}"
 
   get-app-clusters:
     runs-on: ubuntu-22.04
