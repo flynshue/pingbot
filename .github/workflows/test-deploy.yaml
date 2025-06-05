@@ -30,7 +30,7 @@ jobs:
     strategy:
       matrix:
         mgmt_cluster: ${{ fromJson(needs.get-mgmt-cluster.outputs.mgmt_clusters) }}
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ matrix.mgmt_cluster.runner }}
     steps:
       - name: git checkout
         uses: actions/checkout@v4
