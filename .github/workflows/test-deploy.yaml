@@ -53,7 +53,8 @@ jobs:
     needs: [install, get-mgmt-cluster]
     runs-on: ubuntu-22.04
     outputs:
-        clusters: ${{ steps.create-matrix.outputs.matrix }}
+        ocp_clusters: ${{ steps.create-matrix.outputs.ocp_matrix }}
+        eck_clusters: ${{ steps.create-matrix.outputs.eck_matrix }}
     steps:
       - name: git checkout
         uses: actions/checkout@v4
@@ -80,16 +81,20 @@ jobs:
       - name: Create matrix of cluster file names
         id: create-matrix
         run: |
-          clusters_array=$(yq '.github.app-clusters[] + .github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
-          echo "matrix=$(echo $clusters_array)" >> $GITHUB_OUTPUT
-          echo "CLUSTERS_ARRAY: $clusters_array)"
+          ocp_array=$(yq '.github.ocp-clusters[] + .github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
+          echo "ocp_matrix=$(echo $ocp_array)" >> $GITHUB_OUTPUT
+          echo "CLUSTERS_ARRAY: $ocp_array)"
 
-  add-clusters:
+          eck_array=$(yq '.github.ocp-clusters[] + .github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
+          echo "ocp_matrix=$(echo $eck_array)" >> $GITHUB_OUTPUT
+          echo "CLUSTERS_ARRAY: $eck_array)"
+
+  add-ocp-clusters:
     needs: [get-app-clusters, install]
     strategy:
       max-parallel: 1
       matrix:
-        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.clusters) }}
+        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.ocp_clusters) }}
     runs-on: ${{ matrix.app-cluster.runner }}
     name: Add app cluster ${{ matrix.app-cluster.app_cluster_name }} to argo-cd in ${{ matrix.app-cluster.mgmt_cluster_name }}
     steps:
@@ -102,3 +107,22 @@ jobs:
         id: app-kubeadmin
         run: |
           echo "aws s3 cp s3://${{matrix.app-cluster.s3_bucket}}/auth/kubeadmin-password ."
+
+  add-eck-clusters:
+    needs: [get-app-clusters, install]
+    strategy:
+      max-parallel: 1
+      matrix:
+        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.eck_clusters) }}
+    runs-on: ${{ matrix.app-cluster.runner }}
+    name: Add app cluster ${{ matrix.app-cluster.app_cluster_name }} to argo-cd in ${{ matrix.app-cluster.mgmt_cluster_name }}
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: log into eck cluster
+        id: app-kubeadmin
+        run: |
+          echo "aws eck update-kubeconfig --name {{ matrix.app-clusrer.app_cluster_name }}"

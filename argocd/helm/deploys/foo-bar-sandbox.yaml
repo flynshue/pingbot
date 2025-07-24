@@ -4,8 +4,20 @@ github:
   runner: ubuntu-22.04
   environment: sandbox
   account_id: sandbox-id
-  app-clusters:
+  ocp-clusters:
     - app_cluster_name: sbx-app1-cluster
       s3_bucket: sandbox-cluster-state/sbx-app1-cluster
+      labels:
+        - type: ocp
+        - role: application
     - app_cluster_name: sbx-app2-cluster
       s3_bucket: sandbox-cluster-state/sbx-app2-cluster
+      labels:
+        - type: ocp
+        - role: application
+  eks-clusters:
+    - app_cluster_name: eks-sbx-app1-cluster
+      labels:
+        - type: eks
+        - role: application
+

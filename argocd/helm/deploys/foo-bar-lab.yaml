@@ -4,7 +4,7 @@ github:
   runner: ubuntu-22.04
   environment: lab
   account_id: lab-id
-  app-clusters:
+  ocp-clusters:
     - app_cluster_name: lab-app1-cluster
       s3_bucket: lab-cluster-state/lab-app1-cluster
     - app_cluster_name: lab-app2-cluster
