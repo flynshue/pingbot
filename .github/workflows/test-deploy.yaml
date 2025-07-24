@@ -39,15 +39,15 @@ jobs:
 
       - name: Get account Access Token
         run: |
-          echo "get access token for account ${{ matrix.account_id }}"
+          echo "get access token for account ${{ matrix.mgmt_cluster.account_id }}"
 
       - name: Auth to cluster
         run: |
-          echo "auth to cluster ${{ matrix.mgmt_cluster_name }}"
+          echo "auth to cluster ${{ matrix.mgmt_cluster.mgmt_cluster_name }}"
 
       - name: Get mmgt cluster
         run: |
-          echo "install mgmt cluster ${{ matrix.mgmt_cluster_name }} in ${{ matrix.environment }} --label ${{ matrix.account_id }}"
+          echo "install mgmt cluster ${{ matrix.mgmt_cluster.mgmt_cluster_name }} in ${{ matrix.mgmt_cluster.environment }} --label ${{ matrix.mgmt_cluster.account_id }}"
 
   get-app-clusters:
     needs: [install, get-mgmt-cluster]
