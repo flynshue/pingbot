@@ -55,6 +55,8 @@ jobs:
     outputs:
         ocp_clusters: ${{ steps.create-matrix.outputs.ocp_matrix }}
         eck_clusters: ${{ steps.create-matrix.outputs.eck_matrix }}
+        has_ocp: ${{ steps.cluster-types.outputs.has_ocp_clusters}}
+        has_eks: ${{ steps.cluster-types.outputs.has_eks_clusters}}
     steps:
       - name: git checkout
         uses: actions/checkout@v4
@@ -78,6 +80,13 @@ jobs:
         with:
           files: |
             argocd/helm/deploys/${{ steps.searchString.outputs.searchString }}.yaml
+
+      - name: Gather application cluster types
+        id: cluster-types
+        run: |
+          echo "has_ocp_clusters=$(yq '.github' -o json | jq '.|has("ocp-clusters")')" >> GITHUB_OUTPUT
+          echo "has_eks_clusters=$(yq '.github' -o json | jq '.|has("eks-clusters")')" >> GITHUB_OUTPUT
+
       - name: Create matrix of cluster file names
         id: create-matrix
         run: |
@@ -91,6 +100,7 @@ jobs:
 
   add-ocp-clusters:
     needs: [get-app-clusters, install]
+    if: ${{ needs.get-app-clusters.outputs.has_ocp }}
     strategy:
       max-parallel: 1
       matrix:
@@ -110,6 +120,7 @@ jobs:
 
   add-eck-clusters:
     needs: [get-app-clusters, install]
+    if: ${{ needs.get-app-clusters.outputs.has_eks }}
     strategy:
       max-parallel: 1
       matrix:
