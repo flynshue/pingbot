@@ -53,12 +53,7 @@ jobs:
     needs: [install, get-mgmt-cluster]
     runs-on: ubuntu-22.04
     outputs:
-        ocp_clusters: ${{ steps.create-matrix.outputs.ocp_matrix }}
-        eck_clusters: ${{ steps.create-matrix.outputs.eck_matrix }}
-        has_ocp: ${{ steps.cluster-types.outputs.has_ocp_clusters}}
-        has_eks: ${{ steps.cluster-types.outputs.has_eks_clusters}}
-        # has_ocp: true
-        # has_eks: false
+        app_clusters: ${{ steps.create-matrix.outputs.cluster_matrix }}
     steps:
       - name: git checkout
         uses: actions/checkout@v4
@@ -83,30 +78,20 @@ jobs:
           files: |
             argocd/helm/deploys/${{ steps.searchString.outputs.searchString }}.yaml
 
-      - name: Gather application cluster types
-        id: cluster-types
-        run: |
-          echo "has_ocp_clusters=$(yq '.github' -o json | jq '.|has("ocp-clusters")')" >> GITHUB_OUTPUT
-          echo "has_eks_clusters=$(yq '.github' -o json | jq '.|has("eks-clusters")')" >> GITHUB_OUTPUT
-
       - name: Create matrix of cluster file names
         id: create-matrix
         run: |
-          ocp_array=$(yq '.github.ocp-clusters[] + .github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
-          echo "ocp_matrix=$(echo $ocp_array)" >> $GITHUB_OUTPUT
-          echo "CLUSTERS_ARRAY: $ocp_array)"
+          cluster_array=$(yq '.github.app-clusters[] + .github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
+          echo "cluster_matrix=$(echo $cluster_array)" >> $GITHUB_OUTPUT
+          echo "CLUSTERS_ARRAY: $cluster_array)"
 
-          eck_array=$(yq '.github.ocp-clusters[] + .github' ${{ steps.files.outputs.all_changed_files }} -o=json -I=0 | jq  --slurp . )
-          echo "ocp_matrix=$(echo $eck_array)" >> $GITHUB_OUTPUT
-          echo "CLUSTERS_ARRAY: $eck_array)"
-
-  add-ocp-clusters:
+  add-app-clusters:
     needs: [get-app-clusters, install]
     if: needs.get-app-clusters.outputs.has_ocp == 'true'
     strategy:
       max-parallel: 1
       matrix:
-        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.ocp_clusters) }}
+        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.app_clusters) }}
     runs-on: ${{ matrix.app-cluster.runner }}
     name: Add app cluster ${{ matrix.app-cluster.app_cluster_name }} to argo-cd in ${{ matrix.app-cluster.mgmt_cluster_name }}
     steps:
@@ -115,32 +100,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get app cluster kubeadmin from s3
+      - name: Get ocp app cluster kubeadmin from s3
+        if: matrix.app-cluster.type == 'ocp'
         id: app-kubeadmin
         run: |
           echo "aws s3 cp s3://${{matrix.app-cluster.s3_bucket}}/auth/kubeadmin-password ."
+
+      - name: Get eks kubeconfig
+        if: matrix.app-cluster.type == 'eks'
+        id: eks-kubeadmin
+        run: |
+          echo "aws eks update-kubeconfig --name ${{ matrix.app-cluster.app_cluster_name }}"
 
       - name: add cluster with labels
         run: |
           echo "argocd cluster add --name ${{ matrix.app-cluster.app_cluster_name }}"
           echo "${{ matrix.app-cluster.labels }}"
 
-  add-eck-clusters:
-    needs: [get-app-clusters, install]
-    if: needs.get-app-clusters.outputs.has_eks == 'true'
-    strategy:
-      max-parallel: 1
-      matrix:
-        app-cluster: ${{ fromJson(needs.get-app-clusters.outputs.eck_clusters) }}
-    runs-on: ${{ matrix.app-cluster.runner }}
-    name: Add app cluster ${{ matrix.app-cluster.app_cluster_name }} to argo-cd in ${{ matrix.app-cluster.mgmt_cluster_name }}
-    steps:
-      - name: git checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: log into eck cluster
-        id: app-kubeadmin
-        run: |
-          echo "aws eck update-kubeconfig --name {{ matrix.app-clusrer.app_cluster_name }}"
