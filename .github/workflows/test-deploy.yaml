@@ -114,5 +114,5 @@ jobs:
       - name: add cluster with labels
         run: |
           echo "argocd cluster add --name ${{ matrix.app-cluster.app_cluster_name }}"
-          echo "${{ matrix.app-cluster.labels }}"
+          echo "${{ toJson(matrix.app-cluster.labels) }}"
 
