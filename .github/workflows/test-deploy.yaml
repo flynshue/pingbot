@@ -100,7 +100,7 @@ jobs:
 
   add-ocp-clusters:
     needs: [get-app-clusters, install]
-    if: ${{ needs.get-app-clusters.outputs.has_ocp }}
+    if: "${{ needs.get-app-clusters.outputs.has_ocp }}"
     strategy:
       max-parallel: 1
       matrix:
@@ -125,7 +125,7 @@ jobs:
 
   add-eck-clusters:
     needs: [get-app-clusters, install]
-    if: ${{ needs.get-app-clusters.outputs.has_eks }}
+    if: "${{ needs.get-app-clusters.outputs.has_eks }}"
     strategy:
       max-parallel: 1
       matrix:
