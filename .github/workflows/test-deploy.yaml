@@ -55,10 +55,10 @@ jobs:
     outputs:
         ocp_clusters: ${{ steps.create-matrix.outputs.ocp_matrix }}
         eck_clusters: ${{ steps.create-matrix.outputs.eck_matrix }}
-        # has_ocp: ${{ steps.cluster-types.outputs.has_ocp_clusters}}
-        # has_eks: ${{ steps.cluster-types.outputs.has_eks_clusters}}
-        has_ocp: true
-        has_eks: false
+        has_ocp: ${{ steps.cluster-types.outputs.has_ocp_clusters}}
+        has_eks: ${{ steps.cluster-types.outputs.has_eks_clusters}}
+        # has_ocp: true
+        # has_eks: false
     steps:
       - name: git checkout
         uses: actions/checkout@v4
@@ -102,7 +102,7 @@ jobs:
 
   add-ocp-clusters:
     needs: [get-app-clusters, install]
-    if: '${{ needs.get-app-clusters.outputs.has_ocp }}'
+    if: ${{ fromJson(needs.get-app-clusters.outputs.has_ocp) }}
     strategy:
       max-parallel: 1
       matrix:
@@ -127,7 +127,7 @@ jobs:
 
   add-eck-clusters:
     needs: [get-app-clusters, install]
-    if: '${{ needs.get-app-clusters.outputs.has_eks }}'
+    if: ${{ fromJson(needs.get-app-clusters.outputs.has_eks) }}
     strategy:
       max-parallel: 1
       matrix:
