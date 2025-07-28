@@ -87,7 +87,6 @@ jobs:
 
   add-app-clusters:
     needs: [get-app-clusters, install]
-    if: needs.get-app-clusters.outputs.has_ocp == 'true'
     strategy:
       max-parallel: 1
       matrix:
