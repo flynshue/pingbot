@@ -8,9 +8,8 @@ github:
     - app_cluster_name: sbx-app1-cluster
       s3_bucket: sandbox-cluster-state/sbx-app1-cluster
       labels:
-        - type: ocp
-        - role: application
-    - app_cluster_name: sbx-app2-cluster
+       - "type=ocp"
+       - "role=application"
       s3_bucket: sandbox-cluster-state/sbx-app2-cluster
       labels:
         - type: ocp

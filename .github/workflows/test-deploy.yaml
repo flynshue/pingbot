@@ -118,6 +118,11 @@ jobs:
         run: |
           echo "aws s3 cp s3://${{matrix.app-cluster.s3_bucket}}/auth/kubeadmin-password ."
 
+      - name: add cluster with labels
+        run: |
+          echo "argocd cluster add --name ${{ matrix.app-cluster.app_cluster_name }}"
+          echo "${{ matrix.app-cluster.labels }}"
+
   add-eck-clusters:
     needs: [get-app-clusters, install]
     if: ${{ needs.get-app-clusters.outputs.has_eks }}
