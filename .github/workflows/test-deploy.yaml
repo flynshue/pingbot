@@ -115,7 +115,7 @@ jobs:
         run: |
           argocd_cmd="argocd cluster add --name ${{ matrix.app-cluster.app_cluster_name }}"
           extra_args=""
-          if [ ${{ contains(matrix.app-cluster, 'labels') == 'true' }} ]; then
+          if [ ${{ contains(matrix.app-cluster, 'labels') }} ]; then
             labels=$(echo '${{ toJson(matrix.app-cluster.labels) }}'  | jq '.[]|to_entries|map(.key, .value)|join("=")')
             echo ${labels}
             for i in ${labels[@]}; do extra_args="${extra_args}--label ${i} "; done
