@@ -16,4 +16,7 @@ github:
       labels:
         - type: eks
         - role: application
+    - app_cluster_name: eks-sbx-app2-cluster
+      type: eks
+
 
