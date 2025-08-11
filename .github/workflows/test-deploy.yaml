@@ -114,7 +114,7 @@ jobs:
       - name: add cluster with labels
         run: |
           argocd_cmd="argocd cluster add --name ${{ matrix.app-cluster.app_cluster_name }}"
-          labels=$(yq '.github.app-clusters[0].labels[]' ${1} -o json -I 0 | jq '.|to_entries|map(.key, .value)|join("=")')
+          labels=$(yq '.github.app-clusters[0].labels[]' ${{matrix.app-cluster.labels} -o json -I 0 | jq '.|to_entries|map(.key, .value)|join("=")')
           extra_args=""
           for i in ${labels[@]}; do extra_args="${extra_args}--label ${i} "; done
           echo "${argocd_cmd} ${extra_args}"
