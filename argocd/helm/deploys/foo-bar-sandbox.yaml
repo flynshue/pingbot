@@ -9,10 +9,6 @@ github:
       s3_bucket: sandbox-cluster-state/sbx-app1-cluster
       type: ocp
       labels:
-       - "type=ocp"
-       - "role=application"
-      s3_bucket: sandbox-cluster-state/sbx-app2-cluster
-      labels:
         - type: ocp
         - role: application
     - app_cluster_name: eks-sbx-app1-cluster
