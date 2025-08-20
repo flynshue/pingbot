@@ -4,3 +4,5 @@ metadata:
   name: app-rblack-sbx-app1
 spec:
   project: team-a
+  source:
+    chart: rblack-00

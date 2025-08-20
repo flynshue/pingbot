@@ -1,0 +1,22 @@
+# These values are used for the github action
+github:
+  mgmt_cluster_name:  sandbox-mgmt
+  runner: ubuntu-22.04
+  environment: sandbox
+  account_id: sandbox-id
+  app-clusters:
+    - app_cluster_name: sbx-app1-cluster
+      s3_bucket: sandbox-cluster-state/sbx-app1-cluster
+      type: ocp
+      labels:
+        - type: ocp
+        - role: application
+    - app_cluster_name: eks-sbx-app1-cluster
+      type: eks
+      labels:
+        - type: eks
+        - role: application
+    - app_cluster_name: eks-sbx-app2-cluster
+      type: eks
+
+

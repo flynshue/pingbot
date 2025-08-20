@@ -1,0 +1,117 @@
+name: Application Deploy
+on: 
+  workflow_call:
+    inputs:
+      file:
+        required: true
+        type: string
+      new-app:
+        required: true
+        type: boolean
+
+jobs:
+  app-deploy:
+    permissions:
+      id-token: write
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ubuntu-22.04
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get kind Application or ApplicationSet
+        id: kind
+        run: |
+          echo "app_kind=$(yq '.kind' ${{ inputs.file }})" >> $GITHUB_OUTPUT
+
+      - name: Get Application Info
+        id: app-info
+        run: |
+          echo "app_name=$(yq '.metadata.name' ${{ inputs.file }})" >> $GITHUB_OUTPUT
+          echo "project=$(yq '.. | select(.spec? and .spec.project?) | .spec.project' ${{ inputs.file }})" >> $GITHUB_OUTPUT
+
+      
+      - name: Check if app exists
+        if: github.event.action != 'closed' && inputs.new-app
+        run: |
+          echo "check if ${{ steps.app-info.outputs.app_name }} exists in ${{ steps.app_info.outputs.project }}"
+
+      - name: Disable sync for existing application
+        if: inputs.new-app == false 
+        run: |
+          echo "disable sync for ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+      
+      - name: Create/Update Sync window for application
+        if: github.event.action != 'closed'
+        run: |
+          echo "update sync for ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+
+      - name: Create/Update appset
+        if: github.event.action != 'closed' && steps.kind.outputs.app_kind != 'Application'
+        run: |
+          if ${{ inputs.new-app }}; then
+            echo "create appset ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+          else
+            echo "update appset ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+
+          cat ${{ inputs.file }}
+
+
+      - name: Create/Update app
+        if: github.event.action != 'closed' && steps.kind.outputs.app_kind != 'ApplicationSet'
+        run: |
+          if ${{ inputs.new-app }}; then
+            echo "create app ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+          else
+            echo "update app ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+          fi
+
+          cat ${{ inputs.file }}
+      
+      - name: Get Sync Details
+        if: github.event.action != 'closed' && steps.kind.outputs.app_kind != 'ApplicationSet'
+        id: sync-details
+        run: |
+          echo "get sync details from ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+      
+      - name: Sync ArgoCD application
+        if: github.event.action != 'closed' && steps.kind.outputs.app_kind != 'ApplicationSet'
+        run: |
+          echo "sync ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }}"
+
+      - name: PR Comment
+        if: github.event.action != 'closed' 
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            #### Application `${{ steps.app-info.outputs.app_name }}` Deployed Successfully
+            
+          refresh-message-position: true
+          message-id: ${{ steps.app-info.outputs.app_name }}
+
+      - name: Get event state
+        env:
+          EVENT_DATA: ${{ toJSON(github.event) }}
+        run: |
+          echo "github.event.action == ${{ github.event.action }}  github.event.label.name == ${{ github.event.label.name }}"
+          jq -r '.pull_request.labels' <<< $EVENT_DATA
+      
+      - name: Remove App from Sync Window
+        if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && contains(github.event.label.name, 'deploy'))
+        run: |
+          echo "Remove ${{ steps.app-info.outputs.app_name }} sync window from ${{ steps.app-info.outputs.project }}"
+      
+      - name: Remove Ignore Differences
+        if: github.event.action == 'closed' || (github.event.action == 'unlabeled' && contains(github.event.label.name, 'deploy')) && inputs.new-app == false
+        run: |
+          echo "Remove ignore differences on existing app ${{ steps.app-info.outputs.app_name }} in ${{ steps.app-info.outputs.project }} because event was closed or deploy label removed from PR"
+
+      - name: Delete any hanging applications from PR
+        if: (github.event.action == 'closed' || (github.event.action == 'unlabeled' && contains(github.event.label.name, 'deploy'))) && steps.kind.outputs.app_kind != 'ApplicationSet'
+        continue-on-error: true
+        run: |
+          echo "Need to delete app ${{ steps.app-info.outputs.app}}"
